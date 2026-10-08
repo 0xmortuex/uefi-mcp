@@ -191,11 +191,24 @@ def uefi_boot(app: str, timeout_s: float = 30.0) -> str:
         out.append("The app started but printed nothing.")
     out.append("")
     out.append(ovmf_log.explain(parsed))
-    app_name = os.path.basename(app).lower()
+    first = parsed.attempts[0] if parsed.attempts else None
+    if first is not None and first.failed_load is not None:
+        # The status OVMF prints for a rejected image differs between EDK2
+        # versions (a stripped-relocation image is "Invalid Parameter" in
+        # QEMU's bundled OVMF and "Not Found" in Ubuntu's), so check the file
+        # itself rather than trusting the status alone.
+        report = pe_image.analyze(app)
+        if "PROBLEMS:" in report:
+            out.append("")
+            out.append("What's wrong with the image (uefi_image):")
+            out.append(report[report.index("PROBLEMS:"):])
+    # Debug builds of OVMF name the image after the .efi; release builds use
+    # the PDB path from the debug directory (crash.pdb), so compare stems.
+    app_stem = os.path.splitext(os.path.basename(app).lower())[0]
     for exc in parsed.exceptions:
         ip = exc.registers.get("RIP", exc.registers.get("EIP"))
-        loaded = (exc.image or "").lower()
-        if ip is not None and exc.image_base is not None and loaded in (app_name, "bootx64.efi"):
+        loaded = os.path.splitext(os.path.basename((exc.image or "").lower()))[0]
+        if ip is not None and exc.image_base is not None and loaded in (app_stem, "bootx64"):
             out.append("")
             out.append("Faulting instruction:")
             out.append(pe_image.disassemble(app, ip - exc.image_base, count=3, before=4))

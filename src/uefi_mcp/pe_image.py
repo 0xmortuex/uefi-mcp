@@ -71,7 +71,8 @@ def analyze(path: str) -> str:
         if fh.Characteristics & IMAGE_FILE_RELOCS_STRIPPED:
             problems.append("IMAGE_FILE_RELOCS_STRIPPED is set: the image can only run at its "
                             f"ImageBase ({oh.ImageBase:#x}), but firmware picks the load address, "
-                            "so LoadImage rejects it (OVMF: `Invalid Parameter`). Keep relocations "
+                            "so LoadImage rejects it (OVMF says `Invalid Parameter` or `Not Found`, depending on "
+                            "its EDK2 version). Keep relocations "
                             "(don't pass /fixed or --strip-relocs).")
         notes: list[str] = []
         if relocs == 0 and not fh.Characteristics & IMAGE_FILE_RELOCS_STRIPPED:

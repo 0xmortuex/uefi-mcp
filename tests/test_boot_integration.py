@@ -48,7 +48,10 @@ def test_wrong_subsystem_fails_to_load_with_a_cause():
 
 def test_stripped_relocations_fail_to_load():
     out = boot("stripped.efi")
-    assert "FAILED TO LOAD: Invalid Parameter" in out
+    # The status differs by EDK2 version (QEMU's bundled OVMF: Invalid
+    # Parameter; Ubuntu 24.04's: Not Found) - the cause must be named anyway.
+    assert "FAILED TO LOAD:" in out
+    assert "What's wrong with the image" in out and "IMAGE_FILE_RELOCS_STRIPPED" in out
 
 
 def test_function_table_app_runs_because_it_has_relocations():
