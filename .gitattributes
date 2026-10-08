@@ -1,0 +1,4 @@
+# Fixtures must stay byte-exact (raw console bytes, PE binaries).
+*.efi binary
+*.fd binary
+tests/fixtures/logs/** -text
