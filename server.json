@@ -1,0 +1,22 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.0xmortuex/uefi-mcp",
+  "description": "Boot .efi apps under OVMF and explain failures; decode EFI_STATUS, GUIDs, PE images, FVs.",
+  "repository": {
+    "url": "https://github.com/0xmortuex/uefi-mcp",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "uefi-mcp",
+      "version": "0.1.0",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        { "name": "UEFI_MCP_OVMF_CODE", "description": "OVMF code image, if not found automatically", "isRequired": false },
+        { "name": "UEFI_MCP_OVMF_VARS", "description": "OVMF variable-store template, if not found automatically", "isRequired": false }
+      ]
+    }
+  ]
+}
